@@ -12,20 +12,27 @@ features:
 footer: Open-source MIT Licensed | Copyright © 2020<br />Powered by [dumi](https://d.umijs.org)
 ---
 
-## 快速上手
+## 安装
 
 ```shell script
 npm i async-await-lock
 ```
 
-### 同步执行
+## 使用
 
-```typescript | pure
+```typescript
+import AsyncAwaitLock from 'async-await-lock';
 
-```
+const lock = new AsyncAwaitLock();
 
-### 异步执行
+async function serialTask() {
+  await lock.acquire();
 
-```typescript | pure
-
+  try {
+    // Don't return a promise here as Promise may resolve after finally
+    // has executed
+  } finally {
+    lock.unlock();
+  }
+}
 ```
