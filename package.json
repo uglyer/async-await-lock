@@ -15,12 +15,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/uglyer/by-lazy.git"
+    "url": "https://github.com/uglyer/async-await-lock.git"
   },
   "bugs": {
-    "url": "https://github.com/uglyer/by-lazy/issues"
+    "url": "https://github.com/uglyer/async-await-lock/issues"
   },
-  "homepage": "https://demo.com.com.sb/by-lazy/#/",
+  "homepage": "https://demo.com.com.sb/async-await-lock/#/",
   "keywords": [
     "async",
     "await",
