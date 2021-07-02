@@ -56,7 +56,7 @@ export default class AsyncAwaitLock {
   /**
    * 上锁 锁定前必须等待上一个锁结束
    */
-  locked() {
+  acquire() {
     this.waitLockCount++;
     return this.waitLock().then(() => {
       this.waitLockCount--;
