@@ -12,6 +12,25 @@
 npm i async-await-lock
 ```
 
+### 使用
+
+```typescript
+import AsyncAwaitLock from 'async-await-lock';
+
+const lock = new AsyncAwaitLock();
+
+async function serialTask() {
+  await lock.acquire();
+
+  try {
+    // Don't return a promise here as Promise may resolve after finally
+    // has executed
+  } finally {
+    lock.unlock();
+  }
+}
+```
+
 ## Getting Started
 
 Install dependencies,
