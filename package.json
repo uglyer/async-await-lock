@@ -1,7 +1,7 @@
 {
   "name": "async-await-lock",
   "description": "用于异步功能的互斥锁",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "scripts": {
     "start": "dumi dev",
     "docs:build": "dumi build",

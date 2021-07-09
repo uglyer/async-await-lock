@@ -21,10 +21,16 @@ export default class AsyncAwaitLock {
     [];
 
   /**
+   * 状态锁
+   * @param maxCount 最大锁数量
+   */
+  constructor(public maxCount = 1) {}
+
+  /**
    * 是否锁定
    */
   get isLock() {
-    return this.lockCount > 0 || this.waitLockCount > 0;
+    return this.lockCount + this.waitLockCount >= this.maxCount;
   }
 
   /**
@@ -45,7 +51,9 @@ export default class AsyncAwaitLock {
    */
   protected waitLock(): Promise<AsyncAwaitLock> {
     return new Promise<AsyncAwaitLock>((resolve) => {
-      if (this.lockCount == 0) {
+      if (this.lockCount < this.maxCount) {
+        // 确保上锁动作同步执行
+        this.lockCount++;
         resolve(this);
         return;
       }
@@ -60,7 +68,6 @@ export default class AsyncAwaitLock {
     this.waitLockCount++;
     return this.waitLock().then(() => {
       this.waitLockCount--;
-      this.lockCount++;
     });
   }
 
