@@ -51,7 +51,10 @@ export default class AsyncAwaitLock {
    */
   protected waitLock(): Promise<AsyncAwaitLock> {
     return new Promise<AsyncAwaitLock>((resolve) => {
-      if (this.lockCount < this.maxCount) {
+      if (
+        this.lockCount < this.maxCount &&
+        this.waitLockCount <= this.maxCount
+      ) {
         // 确保上锁动作同步执行
         this.lockCount++;
         resolve(this);
@@ -90,6 +93,8 @@ export default class AsyncAwaitLock {
       return;
     }
     await event(this);
-    await this.triggerWaitEvent();
+    if (this.lockCount < this.maxCount && this.waitLockCount <= this.maxCount) {
+      await this.triggerWaitEvent();
+    }
   }
 }
