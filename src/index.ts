@@ -51,7 +51,7 @@ export default class AsyncAwaitLock {
    * 上锁 锁定前必须等待上一个锁结束
    */
   acquire() {
-    if (this.lockCount < this.lockCount) {
+    if (this.lockCount < this.maxCount) {
       this.lockCount++;
       return Promise.resolve();
     }
