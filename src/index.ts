@@ -70,8 +70,7 @@ export default class AsyncAwaitLock {
       this.lockCount++;
       queueMicrotask(() => task());
     }
-    while (this.lockCount < this.maxCount) {
-      this.lockCount++;
+    while (this.lockCount < this.maxCount && this.waitLockCount > 0) {
       const task = this.waitList.shift();
       if (task) {
         this.lockCount++;
