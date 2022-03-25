@@ -1,7 +1,12 @@
-const queueMicrotask =
-  typeof window['queueMicrotask'] == 'function'
-    ? window['queueMicrotask']
-    : window.setTimeout;
+(function (self) {
+  'use strict';
+
+  if (typeof self['queueMicrotask'] == "function") {
+    return;
+  }
+  self['queueMicrotask'] = self.setTimeout;
+})(typeof self !== 'undefined' ? self : global);
+
 
 /**
  * 异步功能的互斥锁
@@ -27,10 +32,17 @@ export default class AsyncAwaitLock {
   protected waitList: Array<() => void> = [];
 
   /**
+   * 等待空闲列表
+   * @protected
+   */
+  protected waitIdleList: Array<() => void> = [];
+
+  /**
    * 状态锁
    * @param maxCount 最大锁数量
    */
-  constructor(public maxCount = 1) {}
+  constructor(public maxCount = 1) {
+  }
 
   /**
    * 是否锁定
@@ -40,11 +52,23 @@ export default class AsyncAwaitLock {
   }
 
   /**
-   * 等待锁结束
-   * @deprecated {@link acquire}
+   * 等待空闲
+   * @deprecated {@link waitIdle}
    */
   wait(): Promise<void> {
-    return this.acquire();
+    return this.waitIdle();
+  }
+
+  /**
+   * 等待空闲
+   */
+  waitIdle(): Promise<void> {
+    if (this.lockCount == 0) {
+      return Promise.resolve();
+    }
+    return new Promise(resolve => {
+      this.waitIdleList.push(resolve);
+    });
   }
 
   /**
@@ -75,6 +99,12 @@ export default class AsyncAwaitLock {
       if (task) {
         this.lockCount++;
         queueMicrotask(() => task());
+      }
+    }
+    while (this.lockCount == 0 && this.waitLockCount == 0 && this.waitIdleList.length > 0) {
+      const idleTask = this.waitIdleList.shift();
+      if (idleTask) {
+        idleTask?.();
       }
     }
   }
